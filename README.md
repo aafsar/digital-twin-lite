@@ -108,6 +108,9 @@ Edit `knowledge/user_preference.txt` to personalize:
 - All agents use FileReadTool to access schedule data
 - Web research requires Serper API key
 
+## Learning outcomes
+It was a fun exercise. One thing that did not work for me is the CSVSearchTool, which kept giving me errors. CrewAI's website notes that it is still an experimental tool. Thus I switched to File Reader Tool.
+
 ## Author
 
 Created by Atahan Afsar for MIT AI Studio Fall 2025
