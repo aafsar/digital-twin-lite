@@ -1,6 +1,6 @@
 # MIT AI Studio Class Schedule Assistant
 
-*Atahan Afsar, Tech track*
+**Atahan Afsar, Tech track**
 
 A multi-agent CrewAI system that helps MIT AI Studio Fall 2025 students manage their course schedule, research topics, and track assignments.
 
