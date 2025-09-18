@@ -1,64 +1,111 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
+from crewai_tools import FileReadTool, SerperDevTool, WebsiteSearchTool
+from datetime import datetime
 from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+import os
 
 @CrewBase
 class TwinLite():
-    """TwinLite crew"""
+    """MIT AI Studio Class Schedule Assistant"""
 
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
-    @agent
-    def researcher(self) -> Agent:
-        return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True
-        )
+    # File paths
+    def __init__(self):
+        # Get the absolute path to the data directory
+        self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        self.schedule_path = os.path.join(self.base_path, "data", "schedule.csv")
+        self.preferences_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "user_preference.txt")
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def schedule_navigator(self) -> Agent:
+        """Agent responsible for navigating the course schedule"""
+        # Initialize tools for schedule navigation
+        file_tool = FileReadTool(file_path=self.schedule_path)
+
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
-            verbose=True
+            config=self.agents_config['schedule_navigator'],
+            tools=[file_tool],
+            verbose=True,
+            allow_delegation=False
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-    @task
-    def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+    @agent
+    def topic_researcher(self) -> Agent:
+        """Agent responsible for researching topics and speakers"""
+        # Initialize research tools
+        search_tool = SerperDevTool()
+        web_tool = WebsiteSearchTool()
+
+        return Agent(
+            config=self.agents_config['topic_researcher'],
+            tools=[search_tool, web_tool],
+            verbose=True,
+            allow_delegation=False
+        )
+
+    @agent
+    def study_coordinator(self) -> Agent:
+        """Agent responsible for creating study plans and tracking preparation"""
+        # Initialize tools for study coordination
+        preferences_file_tool = FileReadTool(file_path=self.preferences_path)
+        schedule_file_tool = FileReadTool(file_path=self.schedule_path)
+
+        return Agent(
+            config=self.agents_config['study_coordinator'],
+            tools=[preferences_file_tool, schedule_file_tool],
+            verbose=True,
+            allow_delegation=False
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def next_class_briefing(self) -> Task:
+        """Task to get information about the next upcoming class"""
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['next_class_briefing'],
+            output_file='answers/next_class.md'
+        )
+
+    @task
+    def topic_primer(self) -> Task:
+        """Task to research and create a primer on a specific topic"""
+        return Task(
+            config=self.tasks_config['topic_primer'],
+            output_file='answers/topic_primer.md'
+        )
+
+    @task
+    def weekly_preparation(self) -> Task:
+        """Task to create a weekly preparation plan"""
+        return Task(
+            config=self.tasks_config['weekly_preparation'],
+            output_file='answers/weekly_plan.md'
+        )
+
+    @task
+    def assignment_tracker(self) -> Task:
+        """Task to track all assignments for a specific track"""
+        return Task(
+            config=self.tasks_config['assignment_tracker'],
+            output_file='answers/assignments.md'
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the TwinLite crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Creates the MIT AI Studio Class Schedule Assistant crew"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,
+            tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            memory=True,
+            embedder={
+                "provider": "openai",
+                "config": {
+                    "model": "text-embedding-3-small"
+                }
+            }
         )
