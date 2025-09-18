@@ -8,41 +8,49 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from twin_lite.crew import TwinLite
 
-def run():
-    """
-    Run the MIT AI Studio Class Schedule Assistant crew.
-    """
-    # Get current date for context
-    current_date = datetime.now().strftime("%m/%d/%Y")
-
-    # Get absolute paths
-    base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    schedule_path = os.path.join(base_path, "data", "schedule.csv")
-    preferences_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "user_preference.txt")
-
+def display_welcome(current_date):
+    """Display a friendly welcome message"""
     print("\n" + "="*60)
-    print("🤖 MIT AI Studio Class Schedule Assistant")
+    print("🎓 Welcome to MIT AI Studio Class Schedule Assistant!")
     print("="*60)
-    print(f"📅 Today's Date: {current_date}")
+    print("\nHello! I'm your personal AI assistant for MIT AI Studio Fall 2025.")
+    print("I'm here to help you navigate your course schedule, research topics,")
+    print("prepare for classes, and track your assignments.")
+    print("\nI was created by Atahan Afsar, a fellow student who understands the")
+    print("challenges of keeping up with this exciting but intensive course!")
+    print("="*60)
+    print(f"\n📅 Today's Date: {current_date}")
+    print("-"*60)
+    print("\nHow can I help you today?")
+
+def display_menu():
+    """Display the main menu options"""
+    print("\n1. 📚 Get next class briefing")
+    print("2. 🔍 Research a specific topic")
+    print("3. 📝 Generate weekly preparation plan")
+    print("4. 📋 Track assignments (Tech/Analyst)")
+    print("5. 🚀 Run all tasks")
+    print("6. 👋 Exit\n")
+
+def display_goodbye():
+    """Display a friendly goodbye message"""
+    print("\n" + "="*60)
+    print("👋 Thank you for using MIT AI Studio Class Schedule Assistant!")
+    print("\nGood luck with your studies! Remember:")
+    print("• Stay curious and keep learning")
+    print("• Don't hesitate to experiment with AI agents")
+    print("• Prepare well for Demo Day!")
+    print("\nSee you next time! 🎓")
     print("="*60 + "\n")
 
-    print("Available Options:")
-    print("1. Get next class briefing")
-    print("2. Research a specific topic")
-    print("3. Generate weekly preparation plan")
-    print("4. Track assignments (Tech/Analyst)")
-    print("5. Run all tasks\n")
-
-    choice = input("Select an option (1-5): ").strip()
-
-    # Initialize inputs dictionary with common values
+def run_task(choice, current_date, schedule_path, preferences_path):
+    """Run a specific task based on user choice"""
     inputs = {
         'current_date': current_date,
         'schedule_path': schedule_path,
         'preferences_path': preferences_path
     }
 
-    # Configure based on user choice
     if choice == '1':
         print("\n📚 Fetching next class information...\n")
         crew = TwinLite().crew()
@@ -84,9 +92,7 @@ def run():
         crew = TwinLite().crew()
 
     else:
-        print("\n❌ Invalid choice. Running next class briefing by default.\n")
-        crew = TwinLite().crew()
-        crew.tasks = [crew.tasks[0]]
+        return False  # Invalid choice
 
     # Run the crew
     try:
@@ -106,11 +112,52 @@ def run():
                 print(result_str[:500] + "...\n[Output truncated. Check output files for full results]")
             else:
                 print(result_str)
+        return True
 
     except Exception as e:
         print(f"\n❌ Error running the crew: {e}")
         import traceback
         traceback.print_exc()
+        return False
+
+def run():
+    """
+    Run the MIT AI Studio Class Schedule Assistant crew with interactive loop.
+    """
+    # Get current date for context
+    current_date = datetime.now().strftime("%m/%d/%Y")
+
+    # Get absolute paths
+    base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    schedule_path = os.path.join(base_path, "data", "schedule.csv")
+    preferences_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "user_preference.txt")
+
+    # Display welcome message
+    display_welcome(current_date)
+
+    # Main interaction loop
+    while True:
+        display_menu()
+        choice = input("Select an option (1-6): ").strip()
+
+        if choice == '6':
+            # Exit option
+            display_goodbye()
+            break
+        elif choice in ['1', '2', '3', '4', '5']:
+            # Run the selected task
+            success = run_task(choice, current_date, schedule_path, preferences_path)
+
+            if success:
+                # Ask if user wants to continue
+                print("\n" + "-"*60)
+                print("\n🤔 Is there anything else I can help you with?")
+                #continue_choice = input("\nPress Enter to continue or type 'exit' to quit: ").strip().lower()
+                #if continue_choice == 'exit':
+                #    display_goodbye()
+                #    break
+        else:
+            print("\n❌ Invalid choice. Please select a number between 1 and 6.")
 
 def train():
     """
