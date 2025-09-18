@@ -1,5 +1,7 @@
 # MIT AI Studio Class Schedule Assistant
 
+*Atahan Afsar, Tech track*
+
 A multi-agent CrewAI system that helps MIT AI Studio Fall 2025 students manage their course schedule, research topics, and track assignments.
 
 ## Features
@@ -25,8 +27,9 @@ cd twin_lite
 ```
 
 2. Install dependencies using uv:
+- If `uv` is not already installed, see here for installation steps: https://docs.astral.sh/uv/getting-started/installation/
+- Then, run the following command:
 ```bash
-pip install uv
 uv sync
 ```
 
