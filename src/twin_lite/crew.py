@@ -15,8 +15,8 @@ class TwinLite():
 
     # File paths
     def __init__(self):
-        # Get the absolute path to the twin_lite directory
-        self.base_path = os.path.dirname(os.path.dirname(__file__))
+        # Get the absolute path to the project root (digital-twin-lite directory)
+        self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         self.schedule_path = os.path.join(self.base_path, "data", "schedule.csv")
         self.preferences_path = os.path.join(self.base_path, "knowledge", "user_preference.txt")
 

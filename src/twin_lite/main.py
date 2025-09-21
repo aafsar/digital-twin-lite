@@ -128,7 +128,7 @@ def run():
     current_date = datetime.now().strftime("%m/%d/%Y")
 
     # Get absolute paths
-    base_path = os.path.dirname(os.path.dirname(__file__))
+    base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     schedule_path = os.path.join(base_path, "data", "schedule.csv")
     preferences_path = os.path.join(base_path, "knowledge", "user_preference.txt")
 
@@ -171,7 +171,7 @@ def train():
         n_iterations = int(input("Enter the number of training iterations: "))
 
         current_date = datetime.now().strftime("%m/%d/%Y")
-        base_path = os.path.dirname(os.path.dirname(__file__))
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         schedule_path = os.path.join(base_path, "data", "schedule.csv")
         preferences_path = os.path.join(base_path, "knowledge", "user_preference.txt")
 
@@ -204,7 +204,7 @@ def replay():
         task_id = input("Enter the task ID to replay from: ")
 
         current_date = datetime.now().strftime("%m/%d/%Y")
-        base_path = os.path.dirname(os.path.dirname(__file__))
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         schedule_path = os.path.join(base_path, "data", "schedule.csv")
         preferences_path = os.path.join(base_path, "knowledge", "user_preference.txt")
 
@@ -234,7 +234,7 @@ def test():
     print("="*60 + "\n")
 
     current_date = datetime.now().strftime("%m/%d/%Y")
-    base_path = os.path.dirname(os.path.dirname(__file__))
+    base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     schedule_path = os.path.join(base_path, "data", "schedule.csv")
     preferences_path = os.path.join(base_path, "knowledge", "user_preference.txt")
 
