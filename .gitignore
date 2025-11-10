@@ -1,6 +1,6 @@
 # Project-specific files
 CLAUDE.md
-.instructions/
+_instructions/
 .references/
 
 # Python
